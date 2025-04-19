@@ -1,11 +1,70 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>Receptor Sigfox</title>
+  <meta charset="UTF-8" />
+  <title>Datos del Sensor - LOKA PRIMIS</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f1f1f1;
+      margin: 0;
+      padding: 20px;
+      text-align: center;
+    }
+
+    h1 {
+      color: #333;
+    }
+
+    .card {
+      background: white;
+      border-radius: 10px;
+      padding: 20px;
+      margin: 20px auto;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+      width: 300px;
+    }
+
+    .dato {
+      font-size: 1.2em;
+      margin: 10px 0;
+    }
+  </style>
 </head>
 <body>
-  <h1>Esperando datos de Sigfox...</h1>
-  <script src="sigfox.js"></script>
+  <h1>Datos del sensor LOKA PRIMIS</h1>
+
+  <div id="contenedor">
+    <div class="card">
+      <div class="dato">🌡️ Temperatura: <span id="temp">--</span> °C</div>
+      <div class="dato">💧 Humedad: <span id="hum">--</span> %</div>
+      <div class="dato">📅 Fecha: <span id="fecha">--</span></div>
+    </div>
+  </div>
+
+  <script>
+    async function cargarDatos() {
+      try {
+        const response = await fetch('/.netlify/functions/getData'); //función que da los datos
+        const datos = await response.json();
+
+        if (datos.length === 0) return;
+
+        const ultimo = datos[datos.length - 1];
+
+        document.getElementById("temp").textContent = ultimo.temperatura ?? '--';
+        document.getElementById("hum").textContent = ultimo.humedad ?? '--';
+        document.getElementById("fecha").textContent = new Date(ultimo.fecha).toLocaleString();
+      } catch (err) {
+        console.error("Error cargando datos:", err);
+      }
+    }
+
+    // Cargar al entrar
+    cargarDatos();
+
+    // Opcional: refrescar cada 30 segundos
+    setInterval(cargarDatos, 30000);
+  </script>
 </body>
 </html>
