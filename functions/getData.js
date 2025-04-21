@@ -1,14 +1,12 @@
-exports.handler = async () => {
-  const datosDePrueba = [
-    {
-      fecha: new Date().toISOString(),
-      temperatura: 22,
-      humedad: 45
-    }
-  ];
+exports.handler = async function () {
+  const fakeData = {
+    temperatura: 24.5,
+    humedad: 62,
+    fecha: new Date().toISOString()
+  };
 
   return {
     statusCode: 200,
-    body: JSON.stringify(datosDePrueba)
+    body: JSON.stringify(fakeData)
   };
 };
