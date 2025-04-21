@@ -2,69 +2,61 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <title>Datos del Sensor</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Huerto IoT 🌱</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: #808080;
-      margin: 0;
-      padding: 20px;
       text-align: center;
+      padding: 2rem;
+      background-color: #f0fff4;
     }
-
     h1 {
-      color: #333;
+      color: #2d6a4f;
     }
-
-    .card {
+    .sensor-data {
       background: white;
-      border-radius: 10px;
-      padding: 20px;
-      margin: 20px auto;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-      width: 300px;
+      border-radius: 1rem;
+      box-shadow: 0 0 10px #b7e4c7;
+      padding: 2rem;
+      margin-top: 2rem;
+      display: inline-block;
     }
-
     .dato {
-      font-size: 1.2em;
-      margin: 10px 0;
+      font-size: 2rem;
+      margin: 1rem 0;
+    }
+    .fecha {
+      color: #555;
+      font-size: 0.9rem;
     }
   </style>
 </head>
 <body>
-  <h1>Datos del sensor LOKA PRIMIS</h1>
-
-  <div id="contenedor">
-    <div class="card">
-      <div class="dato">🌡️ Temperatura: <span id="temp">--</span> °C</div>
-      <div class="dato">💧 Humedad: <span id="hum">--</span> %</div>
-      <div class="dato">📅 Fecha: <span id="fecha">--</span></div>
-    </div>
+  <h1>Datos del Sensor 🌡️💧</h1>
+  <div class="sensor-data">
+    <div class="dato">🌡️ Temperatura: <span id="temp">--</span> °C</div>
+    <div class="dato">💧 Humedad: <span id="hum">--</span> %</div>
+    <div class="fecha" id="fecha">Actualizando...</div>
   </div>
 
   <script>
-    async function cargarDatos() {
+    async function obtenerDatos() {
       try {
-        const response = await fetch('/.netlify/functions/getData'); //función que da los datos
-        const datos = await response.json();
+        const res = await fetch("/.netlify/functions/getData");
+        const data = await res.json();
 
-        if (datos.length === 0) return;
-
-        const ultimo = datos[datos.length - 1];
-
-        document.getElementById("temp").textContent = ultimo.temperatura ?? '--';
-        document.getElementById("hum").textContent = ultimo.humedad ?? '--';
-        document.getElementById("fecha").textContent = new Date(ultimo.fecha).toLocaleString();
+        document.getElementById("temp").textContent = data.temperatura;
+        document.getElementById("hum").textContent = data.humedad;
+        document.getElementById("fecha").textContent = "Última actualización: " + new Date(data.fecha).toLocaleString();
       } catch (err) {
-        console.error("Error cargando datos:", err);
+        document.getElementById("fecha").textContent = "Error al cargar datos";
       }
     }
 
-    // Cargar al entrar
-    cargarDatos();
-
-    // Opcional: refrescar cada 30 segundos
-    setInterval(cargarDatos, 30000);
+    obtenerDatos(); // Ejecuta al cargar
+    setInterval(obtenerDatos, 60000); // Actualiza cada 1 minuto
   </script>
 </body>
 </html>
+
