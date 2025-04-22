@@ -1,12 +1,22 @@
-exports.handler = async function () {
-  const fakeData = {
-    temperatura: 24.5,
-    humedad: 62,
-    fecha: new Date().toISOString()
-  };
+const fs = require("fs");
+const path = require("path");
 
-  return {
-    statusCode: 200,
-    body: JSON.stringify(fakeData)
-  };
+exports.handler = async () => {
+  try {
+    const dataPath = path.join(__dirname, "data.json");
+    const data = fs.readFileSync(dataPath, "utf-8");
+
+    return {
+      statusCode: 200,
+      body: data,
+      headers: {
+        "Content-Type": "application/json"
+      }
+    };
+  } catch (err) {
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ error: "No se encontraron datos." })
+    };
+  }
 };
