@@ -2,63 +2,52 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Huerto IoT 🌱</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Datos del Sensor</title>
   <style>
     body {
       font-family: Arial, sans-serif;
       text-align: center;
-      padding: 2rem;
-      background-color: #f0fff4;
+      background: #f0f0f0;
+      padding: 30px;
     }
-    h1 {
-      color: #2d6a4f;
-    }
-    .sensor-data {
+    .card {
       background: white;
-      border-radius: 1rem;
-      box-shadow: 0 0 10px #b7e4c7;
-      padding: 2rem;
-      margin-top: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
       display: inline-block;
+      padding: 20px 40px;
     }
-    .dato {
-      font-size: 2rem;
-      margin: 1rem 0;
-    }
-    .fecha {
-      color: #555;
-      font-size: 0.9rem;
+    .value {
+      font-size: 2em;
+      margin: 10px 0;
     }
   </style>
 </head>
 <body>
-  <h1>Datos del Sensor 🌡️💧</h1>
-  <div class="sensor-data">
-    <div class="dato">🌡️ Temperatura: <span id="temp">--</span> °C</div>
-    <div class="dato">💧 Humedad: <span id="hum">--</span> %</div>
-    <div class="fecha" id="fecha">Actualizando...</div>
-
-    <div class="alerta">Estado del sistema: <span id="mensaje">...</span>!</div>
+  <h1>🌿 Datos del Huerto IoT</h1>
+  <div class="card" id="datos">
+    <p class="value" id="temp">🌡️ Temperatura: Cargando...</p>
+    <p class="value" id="hum">💧 Humedad: Cargando...</p>
+    <p class="value" id="bat">🔋 Batería: Cargando...</p>
+    <p id="fecha">📅 Fecha: Cargando...</p>
+    <p id="disp">🔧 Dispositivo: Cargando...</p>
   </div>
 
   <script>
-    async function obtenerDatos() {
-      try {
-        const res = await fetch("/.netlify/functions/getData");
-        const data = await res.json();
-
-        document.getElementById("temp").textContent = data.temperatura;
-        document.getElementById("hum").textContent = data.humedad;
-        document.getElementById("fecha").textContent = "Última actualización: " + new Date(data.fecha).toLocaleString();
-      } catch (err) {
-        document.getElementById("fecha").textContent = "Error al cargar datos";
-      }
-    }
-
-    obtenerDatos(); // Ejecuta al cargar
-    setInterval(obtenerDatos, 300000); // Actualiza cada 1 minuto
+    fetch('/.netlify/functions/getData')
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById('temp').textContent = `🌡️ Temperatura: ${data.temperatura} °C`;
+        document.getElementById('hum').textContent = `💧 Humedad: ${data.humedad} %`;
+        document.getElementById('bat').textContent = `🔋 Batería: ${data.bateria} V`;
+        document.getElementById('fecha').textContent = `📅 Fecha: ${new Date(data.fecha).toLocaleString()}`;
+        document.getElementById('disp').textContent = `🔧 Dispositivo: ${data.dispositivo}`;
+      })
+      .catch(err => {
+        document.getElementById('datos').innerHTML = '<p>Error al cargar los datos.</p>';
+        console.error(err);
+      });
   </script>
 </body>
 </html>
-
