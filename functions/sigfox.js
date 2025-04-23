@@ -18,12 +18,13 @@ exports.handler = async (event) => {
     const bat = buffer.readUInt8(3) / 10;        // ejemplo: 0x7d = 125 → 12.5V
 
     const data = {
-      temperatura: temp,
-      humedad: hum,
-      bateria: bat,
-      dispositivo: payload.device,
-      fecha: new Date(payload.time * 1000).toISOString()
+      temp: temp,
+      hum: hum,
+      bat: bat,
+      device: payload.device,
+      time: new Date(payload.time * 1000).toISOString()
     };
+
 
     const filePath = path.join(__dirname, "data.json");
     fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
