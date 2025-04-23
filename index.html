@@ -1,52 +1,49 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Datos del Sensor</title>
+  <meta charset="UTF-8">
+  <title>Huerto IoT</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      background: #f0f0f0;
-      padding: 30px;
-    }
+    body { font-family: Arial, sans-serif; background: #f0f0f0; text-align: center; padding: 40px; }
     .card {
       background: white;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.2);
-      display: inline-block;
-      padding: 20px 40px;
+      padding: 20px;
+      margin: auto;
+      border-radius: 15px;
+      width: 300px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
-    .value {
-      font-size: 2em;
-      margin: 10px 0;
-    }
+    h1 { color: #2d2d2d; }
+    p { font-size: 1.2em; }
   </style>
 </head>
 <body>
   <h1>🌿 Datos del Huerto IoT</h1>
-  <div class="card" id="datos">
-    <p class="value" id="temp">🌡️ Temperatura: Cargando...</p>
-    <p class="value" id="hum">💧 Humedad: Cargando...</p>
-    <p class="value" id="bat">🔋 Batería: Cargando...</p>
-    <p id="fecha">📅 Fecha: Cargando...</p>
-    <p id="disp">🔧 Dispositivo: Cargando...</p>
+  <div class="card">
+    <p>🌡️ Temperatura: <span id="temp">Cargando...</span></p>
+    <p>💧 Humedad: <span id="hum">Cargando...</span></p>
+    <p>🔋 Batería: <span id="bat">Cargando...</span></p>
+    <p>📅 <span id="time">Cargando...</span></p>
+    <p>🔧 <span id="device">Cargando...</span></p>
   </div>
 
   <script>
-    fetch('/.netlify/functions/getData')
-      .then(res => res.json())
+    fetch('/data.json')
+      .then(response => response.json())
       .then(data => {
-        document.getElementById('temp').textContent = `🌡️ Temperatura: ${data.temperatura} °C`;
-        document.getElementById('hum').textContent = `💧 Humedad: ${data.humedad} %`;
-        document.getElementById('bat').textContent = `🔋 Batería: ${data.bateria} V`;
-        document.getElementById('fecha').textContent = `📅 Fecha: ${new Date(data.fecha).toLocaleString()}`;
-        document.getElementById('disp').textContent = `🔧 Dispositivo: ${data.dispositivo}`;
+        document.getElementById('temp').textContent = `${data.temp} °C`;
+        document.getElementById('hum').textContent = `${data.hum} %`;
+        document.getElementById('bat').textContent = `${data.bat} V`;
+        document.getElementById('time').textContent = `Fecha: ${new Date(data.time).toLocaleString()}`;
+        document.getElementById('device').textContent = `Dispositivo: ${data.device}`;
       })
-      .catch(err => {
-        document.getElementById('datos').innerHTML = '<p>Error al cargar los datos.</p>';
-        console.error(err);
+      .catch(error => {
+        console.error('Error al cargar datos:', error);
+        document.getElementById('temp').textContent = 'Error';
+        document.getElementById('hum').textContent = 'Error';
+        document.getElementById('bat').textContent = 'Error';
+        document.getElementById('time').textContent = 'Error';
+        document.getElementById('device').textContent = 'Error';
       });
   </script>
 </body>
