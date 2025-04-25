@@ -5,62 +5,43 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Huerto IoT</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f1f1f1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      margin: 0;
-      padding: 2em;
-    }
-    h1 {
-      margin-bottom: 1em;
-    }
+    body { font-family: sans-serif; padding: 2rem; background: #f2f2f2; }
     .card {
       background: white;
-      padding: 2em;
-      border-radius: 1em;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-      text-align: center;
-      font-size: 1.5em;
+      padding: 1.5rem;
+      border-radius: 12px;
+      max-width: 400px;
+      margin: auto;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     }
-    .emoji {
-      font-size: 1.2em;
-      margin-right: 0.4em;
-    }
-    .footer {
-      margin-top: 1em;
-      font-size: 0.9em;
-      color: #555;
-    }
+    .card h2 { margin-bottom: 1rem; }
+    .card p { margin: 0.3rem 0; }
   </style>
 </head>
 <body>
-  <h1>🌿 Datos del Huerto IoT</h1>
   <div class="card">
-    <div><span class="emoji">🌡️</span>Temperatura: <span id="temp">...</span> °C</div>
-    <div><span class="emoji">💧</span>Humedad: <span id="hum">...</span> %</div>
-    <div><span class="emoji">🔋</span>Batería: <span id="bat">...</span> V</div>
-    <div class="footer"><span class="emoji">📅</span>Fecha: <span id="fecha">...</span></div>
-    <div class="footer"><span class="emoji">🔧</span>Dispositivo: <span id="dev">...</span></div>
+    <h2>Datos del Huerto 🌱</h2>
+    <p><strong>Temperatura:</strong> <span id="temp">...</span> °C</p>
+    <p><strong>Humedad:</strong> <span id="hum">...</span> %</p>
+    <p><strong>Batería:</strong> <span id="bat">...</span> V</p>
+    <p><strong>Dispositivo:</strong> <span id="dev">...</span></p>
+    <p><strong>Fecha:</strong> <span id="fecha">...</span></p>
   </div>
 
   <script>
-    async function cargarDatos() {
-      try {
-        const response = await fetch("/.netlify/functions/getData");
-        const data = await response.json();
-        document.getElementById("temp").textContent = data.temperatura ?? "N/A";
-        document.getElementById("hum").textContent = data.humedad ?? "N/A";
-        document.getElementById("bat").textContent = data.bateria ?? "N/A";
-        document.getElementById("fecha").textContent = new Date(data.fecha).toLocaleString() ?? "N/A";
-        document.getElementById("dev").textContent = data.dispositivo ?? "N/A";
-      } catch (error) {
-        console.error("❌ Error cargando datos:", error);
-      }
-    }
-    cargarDatos();
+    fetch('/.netlify/functions/getData')
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById('temp').textContent = data.temperatura;
+        document.getElementById('hum').textContent = data.humedad;
+        document.getElementById('bat').textContent = data.bateria;
+        document.getElementById('dev').textContent = data.dispositivo;
+        document.getElementById('fecha').textContent = new Date(data.fecha).toLocaleString();
+      })
+      .catch(err => {
+        console.error("Error cargando datos:", err);
+      });
   </script>
 </body>
 </html>
+
