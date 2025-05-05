@@ -28,20 +28,26 @@
     <p><strong>Fecha:</strong> <span id="fecha">...</span></p>
   </div>
 
-  <script>
-    fetch('/.netlify/functions/getData')
-      .then(res => res.json())
-      .then(data => {
-        document.getElementById('temp').textContent = data.temperatura;
-        document.getElementById('hum').textContent = data.humedad;
-        document.getElementById('bat').textContent = data.bateria;
-        document.getElementById('dev').textContent = data.dispositivo;
-        document.getElementById('fecha').textContent = new Date(data.fecha).toLocaleString();
-      })
-      .catch(err => {
-        console.error("Error cargando datos:", err);
-      });
-  </script>
+<script>
+  fetch('/.netlify/functions/getData')
+    .then(res => res.json())
+    .then(data => {
+      const ultimo = data[data.length - 1];  // Accede al último objeto
+
+      if (!ultimo) {
+        throw new Error("No hay datos disponibles.");
+      }
+
+      document.getElementById('temp').textContent = ultimo.temperatura;
+      document.getElementById('hum').textContent = ultimo.humedad;
+      document.getElementById('bat').textContent = ultimo.bateria;
+      document.getElementById('dev').textContent = ultimo.dispositivo;
+      document.getElementById('fecha').textContent = new Date(ultimo.fecha).toLocaleString();
+    })
+    .catch(err => {
+      console.error("Error cargando datos:", err);
+    });
+</script>
 </body>
 </html>
 
