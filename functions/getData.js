@@ -7,7 +7,7 @@ exports.handler = async () => {
     if (!res.ok) throw new Error(`Firebase respondió ${res.status}`);
 
     const obj = await res.json();      // { key1: entry1, key2: entry2, … }
-    const arr = Object.values(obj || {});
+    const arr = Object.values(obj || {}).filter(entry => entry.dispositivo === "4CE8C2");
 
     return {
       statusCode: 200,
