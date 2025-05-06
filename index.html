@@ -1,52 +1,70 @@
 <!DOCTYPE html>
 <html lang="es">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Huerto IoT</title>
-    <style>
-      body {
-        font-family: sans-serif;
-        padding: 2rem;
-        background: #f2f2f2;
-      }
-      .card {
-        background: white;
-        padding: 1.5rem;
-        border-radius: 12px;
-        max-width: 400px;
-        margin: auto;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-      }
-      .card h2 {
-        margin-bottom: 1rem;
-      }
-      .card p {
-        margin: 0.3rem 0;
-      }
-    </style>
-  </head>
-  <body>
-    <div class="card">
-      <h2>Datos del Huerto 🌱</h2>
-      <p><strong>Temperatura:</strong> <span id="temp">...</span> °C</p>
-      <p><strong>Humedad:</strong> <span id="hum">...</span> %</p>
-      <p><strong>Batería:</strong> <span id="bat">...</span> V</p>
-      <p><strong>Dispositivo:</strong> <span id="dev">...</span></p>
-      <p><strong>Fecha:</strong> <span id="fecha">...</span></p>
-    </div>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Invernadero IoT</title>
+  <link rel="stylesheet" href="styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+  <header>
+    <h1>🌿 Monitor de Invernadero IoT</h1>
+    <p>Datos en tiempo real del ambiente</p>
+  </header>
 
-    <script>
-      fetch('/.netlify/functions/getData')
-        .then(r => r.json())
-        .then(arr => {
-          const u = arr[arr.length - 1] || {};
-          document.getElementById('temp' ).textContent = u.temperatura ?? '--';
-          document.getElementById('hum'  ).textContent = u.humedad    ?? '--';
-          document.getElementById('bat'  ).textContent = u.bateria    ?? '--';
-          document.getElementById('dev'  ).textContent = u.dispositivo?? '--';
-          document.getElementById('fecha').textContent = u.fecha       ?? '--';
-        });
-    </script>
-  </body>
+  <main>
+    <section class="datos">
+      <div class="medicion">
+        <h2>🌡️ Temperatura</h2>
+        <p id="temp">-- °C</p>
+      </div>
+      <div class="medicion">
+        <h2>💧 Humedad</h2>
+        <p id="hum">-- %</p>
+      </div>
+    </section>
+
+    <section class="alerta">
+      <h2>🔔 Estado del sistema:</h2>
+      <p id="mensaje">Esperando datos...</p>
+    </section>
+
+    <section class="info">
+      <h2>🎯 Objetivo de la práctica</h2>
+      <p>Integrar una aplicación de un sistema de IoT que monitorea un invernadero de pequeña a mediana escala, recibiendo datos sobre temperatura y humedad para optimizar el uso del agua mediante alertas automáticas.</p>
+
+      <h2>⚠️ Problemática</h2>
+      <p>Evitar el malgasto de agua y el riego excesivo de plantas mediante sensores de humedad que detecten niveles bajos y emitan alertas.</p>
+
+      <h2>📊 Cuadro comparativo de protocolos IoT</h2>
+      <div class="tabla-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Tecnología de transporte</th>
+              <th>Ventajas</th>
+              <th>Desventajas</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>LoRaWAN</td><td>LoRa y FSK</td><td>Alta cobertura y bajo consumo de energía</td><td>Limitación de velocidad de datos</td></tr>
+            <tr><td>CoAP</td><td>TCP</td><td>Bajo consumo de recursos y soporta métodos asíncronos y sincrónos</td><td>No adecuada para redes grandes, sin garantía de entrega</td></tr>
+            <tr><td>MIoTY</td><td>TSMA</td><td>Alta eficiencia energética en entornos industriales</td><td>Costos de implementación elevados, menor soporte</td></tr>
+            <tr><td>NB-IoT</td><td>LTE</td><td>Alta cobertura en interiores, buena densidad</td><td>Mayor latencia, enfocado a dispositivos inmóviles</td></tr>
+            <tr><td>MQTT</td><td>TCP y UDP</td><td>Mensajes ligeros en redes de bajo ancho de banda</td><td>Poca seguridad integrada, exigente para dispositivos muy limitados</td></tr>
+            <tr><td>WebSocket</td><td>HTTP</td><td>Comunicación en tiempo real, ideal para apps web/móviles</td><td>Requiere conexión abierta, no ideal para redes de baja latencia</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 Invernadero IoT | Soad Cortés Martinez, Jose Antonio Reyes Cardoso, Ariadna Berenice Pedraza Rodríguez | Matrícula: 230822-4, 224334-4, 230822-4 | Fecha: 10/04/2025</p>
+  </footer>
+
+  <script src="main.js"></script>
+</body>
 </html>
