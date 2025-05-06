@@ -38,16 +38,15 @@
 
     <script>
       fetch('/.netlify/functions/getData')
-        .then(response => response.json())
-        .then(data => {
-          const latest = data[data.length - 1] || {};
-          document.getElementById('temp').textContent  = latest.temperatura ?? '--';
-          document.getElementById('hum').textContent   = latest.humedad    ?? '--';
-          document.getElementById('bat').textContent   = latest.bateria    ?? '--';
-          document.getElementById('dev').textContent   = latest.dispositivo?? '--';
-          document.getElementById('fecha').textContent = latest.fecha      ?? '--';
-        })
-        .catch(console.error);
+        .then(r => r.json())
+        .then(arr => {
+          const u = arr[arr.length - 1] || {};
+          document.getElementById('temp' ).textContent = u.temperatura ?? '--';
+          document.getElementById('hum'  ).textContent = u.humedad    ?? '--';
+          document.getElementById('bat'  ).textContent = u.bateria    ?? '--';
+          document.getElementById('dev'  ).textContent = u.dispositivo?? '--';
+          document.getElementById('fecha').textContent = u.fecha       ?? '--';
+        });
     </script>
   </body>
 </html>
