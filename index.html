@@ -37,7 +37,7 @@
     </div>
 
     <script>
-      fetch('/.netlify/functions/getData.js')
+      fetch('/.netlify/functions/getData')
         .then(r => r.json())
         .then(arr => {
           const u = arr[arr.length - 1] || {};
