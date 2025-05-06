@@ -1,4 +1,3 @@
-console.log("🌐 FIREBASE_DB_URL =", process.env.FIREBASE_DB_URL);
 const fetch = require("node-fetch");
 const DB_URL = process.env.FIREBASE_DB_URL;
 
