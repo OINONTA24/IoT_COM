@@ -94,7 +94,7 @@
     <p><strong>Fecha:</strong> <span id="fecha">...</span></p>
   </div>
 
-  <!-- Modal reutilizable -->
+  
   <div id="modal" class="modal">
     <div class="modal-content">
       <h3 id="modal-title">⚠️ Alerta</h3>
@@ -103,7 +103,7 @@
     </div>
   </div>
 
-  <!-- Gráficas -->
+  
   <canvas id="chartTemp" height="180"></canvas>
   <canvas id="chartHum" height="180"></canvas>
   <canvas id="chartBat" height="180"></canvas>
@@ -143,14 +143,14 @@
         const dev  = u.dispositivo ?? '--';
         const fecha = new Date(u.fecha).toLocaleString();
 
-        // Mostrar valores actuales en la tarjeta
+        
         document.getElementById('temp').textContent  = isNaN(temp) ? '--' : temp.toFixed(1);
         document.getElementById('hum').textContent   = isNaN(hum)  ? '--' : hum;
         document.getElementById('bat').textContent   = isNaN(bat)  ? '--' : bat.toFixed(2);
         document.getElementById('dev').textContent   = dev;
         document.getElementById('fecha').textContent = fecha;
 
-        // Reglas de alerta reales
+        
         if (temp > 30) alertas.push(["🌡️ Temperatura elevada", "Temperatura mayor a 30 °C. Verifica riego o ventilación."]);
         else if (temp < 10) alertas.push(["🌡️ Temperatura baja", "Menor a 10 °C. Protege tus plantas del frío."]);
         if (hum < 30) alertas.push(["💧 Humedad baja", "Humedad por debajo de 30 %. Necesita riego."]);
@@ -158,7 +158,7 @@
         if (bat < 3.3) alertas.push(["🔋 Batería baja", "Batería bajo 3.3 V. Cambia o recarga el sensor."]);
         mostrarSiguienteAlerta();
 
-        // Gráficas
+       
         const labels = arr.map(e => new Date(e.fecha).toLocaleTimeString());
         const dataTemp = arr.map(e => Number(e.temperatura));
         const dataHum  = arr.map(e => Number(e.humedad));
