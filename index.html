@@ -111,7 +111,7 @@
       .then(r => r.json())
       .then(arr => {
         if (!Array.isArray(arr) || arr.length === 0) {
-          console.warn("No hay datos disponibles");
+          alert("No se encontraron datos para graficar");
           return;
         }
 
@@ -157,12 +157,8 @@
             options: {
               responsive: true,
               scales: {
-                y: {
-                  beginAtZero: true
-                },
-                x: {
-                  title: { display: true, text: 'Hora' }
-                }
+                y: { beginAtZero: true },
+                x: { title: { display: true, text: 'Hora' } }
               }
             }
           });
@@ -172,7 +168,10 @@
         createChart('chartHum',  'Humedad (%)',       dataHum,  '#0288d1');
         createChart('chartBat',  'Batería (V)',        dataBat,  '#f57c00');
       })
-      .catch(err => console.error("Error al obtener datos:", err));
+      .catch(err => {
+        console.error("Error al obtener datos:", err);
+        alert("Hubo un problema al obtener los datos del servidor.");
+      });
   </script>
 </body>
 </html>
