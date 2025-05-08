@@ -94,10 +94,11 @@
     <p><strong>Fecha:</strong> <span id="fecha">...</span></p>
   </div>
 
+  <!-- Modal general reutilizable -->
   <div id="modal" class="modal">
     <div class="modal-content">
-      <h3>⚠️ ¡Temperatura elevada!</h3>
-      <p>Se ha detectado una temperatura superior a 30 °C. Verifica el sistema de riego o ventilación.</p>
+      <h3 id="modal-title">⚠️ Alerta</h3>
+      <p id="modal-msg">Mensaje de alerta.</p>
       <button class="close" onclick="document.getElementById('modal').style.display='none'">Cerrar</button>
     </div>
   </div>
@@ -107,11 +108,17 @@
   <canvas id="chartBat" height="180"></canvas>
 
   <script>
+    const showModal = (titulo, mensaje) => {
+      document.getElementById('modal-title').textContent = titulo;
+      document.getElementById('modal-msg').textContent = mensaje;
+      document.getElementById('modal').style.display = 'block';
+    };
+
     fetch('/.netlify/functions/getData')
       .then(r => r.json())
       .then(arr => {
         if (!Array.isArray(arr) || arr.length === 0) {
-          alert("No se encontraron datos para graficar");
+          showModal("Error", "No se encontraron datos para graficar.");
           return;
         }
 
@@ -128,12 +135,25 @@
         document.getElementById('dev').textContent   = dev;
         document.getElementById('fecha').textContent = fecha;
 
+        // ALERTAS VISUALES PERSONALIZADAS
         if (temp > 30) {
-          document.getElementById('modal').style.display = 'block';
+          showModal("🌡️ Temperatura elevada", "Se ha detectado una temperatura superior a 30 °C. Verifica el sistema de riego o ventilación.");
+        } else if (temp < 10) {
+          showModal("🌡️ Temperatura muy baja", "La temperatura es menor a 10 °C. Protege tus plantas del frío.");
         }
 
-        const labels = arr.map(e => new Date(e.fecha).toLocaleTimeString());
+        if (hum < 30) {
+          showModal("💧 Humedad baja", "La humedad es muy baja. Considera activar el riego.");
+        } else if (hum > 90) {
+          showModal("💦 Humedad alta", "La humedad es muy alta. Revisa si hay exceso de riego o lluvia.");
+        }
 
+        if (bat < 3.3) {
+          showModal("🔋 Batería baja", "El voltaje es inferior a 3.3 V. Recarga o cambia la batería del sensor.");
+        }
+
+        // GRÁFICAS
+        const labels = arr.map(e => new Date(e.fecha).toLocaleTimeString());
         const dataTemp = arr.map(e => parseFloat(e.temperatura));
         const dataHum  = arr.map(e => parseFloat(e.humedad));
         const dataBat  = arr.map(e => parseFloat(e.bateria));
@@ -170,8 +190,9 @@
       })
       .catch(err => {
         console.error("Error al obtener datos:", err);
-        alert("Hubo un problema al obtener los datos del servidor.");
+        showModal("Error", "No se pudo conectar con el servidor.");
       });
   </script>
 </body>
 </html>
+
