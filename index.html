@@ -4,11 +4,11 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Huerto IoT</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     body {
       font-family: 'Segoe UI', sans-serif;
       background: #e8f5e9;
-      margin: 0;
       padding: 2rem;
       color: #333;
     }
@@ -82,19 +82,19 @@
       box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
     }
   </style>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
+
   <div class="card">
     <h2>Datos del Huerto 🌱</h2>
     <p><strong>Temperatura:</strong> <span id="temp" class="highlight">...</span> °C</p>
     <p><strong>Humedad:</strong> <span id="hum" class="highlight">...</span> %</p>
-    <p><strong>Batería:</strong> <span id="bat">...</span> V</p>
+    <p><strong>Batería:</strong> <span id="bat" class="highlight">...</span> V</p>
     <p><strong>Dispositivo:</strong> <span id="dev">...</span></p>
     <p><strong>Fecha:</strong> <span id="fecha">...</span></p>
   </div>
 
-  <!-- Modal general reutilizable -->
+  <!-- Modal reutilizable -->
   <div id="modal" class="modal">
     <div class="modal-content">
       <h3 id="modal-title">⚠️ Alerta</h3>
@@ -137,53 +137,40 @@
         }
 
         const u = arr[arr.length - 1];
-        const temp  = parseFloat(u.temperatura ?? 0);
-        const hum   = u.humedad ?? '--';
-        const bat   = u.bateria ?? '--';
-        const dev   = u.dispositivo ?? '--';
-        const fecha = u.fecha ?? '--';
+        const temp = Number(u.temperatura);
+        const hum  = Number(u.humedad);
+        const bat  = Number(u.bateria);
+        const dev  = u.dispositivo ?? '--';
+        const fecha = new Date(u.fecha).toLocaleString();
 
-        document.getElementById('temp').textContent  = temp;
-        document.getElementById('hum').textContent   = hum;
-        document.getElementById('bat').textContent   = bat;
+        // Mostrar valores actuales en la tarjeta
+        document.getElementById('temp').textContent  = isNaN(temp) ? '--' : temp.toFixed(1);
+        document.getElementById('hum').textContent   = isNaN(hum)  ? '--' : hum;
+        document.getElementById('bat').textContent   = isNaN(bat)  ? '--' : bat.toFixed(2);
         document.getElementById('dev').textContent   = dev;
         document.getElementById('fecha').textContent = fecha;
 
-        // ALERTAS EN COLA (una por una)
-        if (temp > 30) {
-          alertas.push(["🌡️ Temperatura elevada", "Temperatura superior a 30 °C. Verifica riego o ventilación."]);
-        } else if (temp < 10) {
-          alertas.push(["🌡️ Temperatura muy baja", "Temperatura menor a 10 °C. Protege tus plantas."]);
-        }
-
-        if (hum < 30) {
-          alertas.push(["💧 Humedad baja", "Humedad menor a 30 %. Activa el riego."]);
-        } else if (hum > 90) {
-          alertas.push(["💦 Humedad alta", "Humedad mayor a 90 %. Puede haber exceso de agua."]);
-        }
-
-        if (bat < 3.3) {
-          alertas.push(["🔋 Batería baja", "Voltaje bajo (<3.3 V). Revisa el sensor."]);
-        }
-
+        // Reglas de alerta reales
+        if (temp > 30) alertas.push(["🌡️ Temperatura elevada", "Temperatura mayor a 30 °C. Verifica riego o ventilación."]);
+        else if (temp < 10) alertas.push(["🌡️ Temperatura baja", "Menor a 10 °C. Protege tus plantas del frío."]);
+        if (hum < 30) alertas.push(["💧 Humedad baja", "Humedad por debajo de 30 %. Necesita riego."]);
+        else if (hum > 90) alertas.push(["💦 Humedad alta", "Humedad por encima de 90 %. Posible exceso de agua."]);
+        if (bat < 3.3) alertas.push(["🔋 Batería baja", "Batería bajo 3.3 V. Cambia o recarga el sensor."]);
         mostrarSiguienteAlerta();
 
-        // GRÁFICAS
+        // Gráficas
         const labels = arr.map(e => new Date(e.fecha).toLocaleTimeString());
-        const dataTemp = arr.map(e => parseFloat(e.temperatura));
-        const dataHum  = arr.map(e => parseFloat(e.humedad));
-        const dataBat  = arr.map(e => parseFloat(e.bateria));
+        const dataTemp = arr.map(e => Number(e.temperatura));
+        const dataHum  = arr.map(e => Number(e.humedad));
+        const dataBat  = arr.map(e => Number(e.bateria));
 
         const createChart = (id, label, data, color) => {
-          const ctx = document.getElementById(id);
-          if (!ctx) return;
-          new Chart(ctx, {
+          new Chart(document.getElementById(id), {
             type: 'line',
             data: {
-              labels: labels,
+              labels,
               datasets: [{
-                label: label,
-                data: data,
+                label, data,
                 borderColor: color,
                 backgroundColor: color + '20',
                 fill: true,
@@ -206,9 +193,10 @@
       })
       .catch(err => {
         console.error("Error al obtener datos:", err);
-        alertas.push(["Error", "No se pudo conectar con el servidor."]);
+        alertas.push(["Error", "Fallo al obtener datos del servidor."]);
         mostrarSiguienteAlerta();
       });
   </script>
 </body>
 </html>
+
