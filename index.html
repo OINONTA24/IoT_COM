@@ -99,10 +99,11 @@
     <div class="modal-content">
       <h3 id="modal-title">⚠️ Alerta</h3>
       <p id="modal-msg">Mensaje de alerta.</p>
-      <button class="close" onclick="document.getElementById('modal').style.display='none'">Cerrar</button>
+      <button class="close">Cerrar</button>
     </div>
   </div>
 
+  <!-- Gráficas -->
   <canvas id="chartTemp" height="180"></canvas>
   <canvas id="chartHum" height="180"></canvas>
   <canvas id="chartBat" height="180"></canvas>
@@ -114,11 +115,24 @@
       document.getElementById('modal').style.display = 'block';
     };
 
+    const alertas = [];
+    const mostrarSiguienteAlerta = () => {
+      if (alertas.length === 0) return;
+      const [titulo, mensaje] = alertas.shift();
+      showModal(titulo, mensaje);
+    };
+
+    document.querySelector(".close").onclick = () => {
+      document.getElementById('modal').style.display = 'none';
+      setTimeout(mostrarSiguienteAlerta, 300);
+    };
+
     fetch('/.netlify/functions/getData')
       .then(r => r.json())
       .then(arr => {
         if (!Array.isArray(arr) || arr.length === 0) {
-          showModal("Error", "No se encontraron datos para graficar.");
+          alertas.push(["Error", "No se encontraron datos para graficar."]);
+          mostrarSiguienteAlerta();
           return;
         }
 
@@ -135,22 +149,24 @@
         document.getElementById('dev').textContent   = dev;
         document.getElementById('fecha').textContent = fecha;
 
-        // ALERTAS VISUALES PERSONALIZADAS
+        // ALERTAS EN COLA (una por una)
         if (temp > 30) {
-          showModal("🌡️ Temperatura elevada", "Se ha detectado una temperatura superior a 30 °C. Verifica el sistema de riego o ventilación.");
+          alertas.push(["🌡️ Temperatura elevada", "Temperatura superior a 30 °C. Verifica riego o ventilación."]);
         } else if (temp < 10) {
-          showModal("🌡️ Temperatura muy baja", "La temperatura es menor a 10 °C. Protege tus plantas del frío.");
+          alertas.push(["🌡️ Temperatura muy baja", "Temperatura menor a 10 °C. Protege tus plantas."]);
         }
 
         if (hum < 30) {
-          showModal("💧 Humedad baja", "La humedad es muy baja. Considera activar el riego.");
+          alertas.push(["💧 Humedad baja", "Humedad menor a 30 %. Activa el riego."]);
         } else if (hum > 90) {
-          showModal("💦 Humedad alta", "La humedad es muy alta. Revisa si hay exceso de riego o lluvia.");
+          alertas.push(["💦 Humedad alta", "Humedad mayor a 90 %. Puede haber exceso de agua."]);
         }
 
         if (bat < 3.3) {
-          showModal("🔋 Batería baja", "El voltaje es inferior a 3.3 V. Recarga o cambia la batería del sensor.");
+          alertas.push(["🔋 Batería baja", "Voltaje bajo (<3.3 V). Revisa el sensor."]);
         }
+
+        mostrarSiguienteAlerta();
 
         // GRÁFICAS
         const labels = arr.map(e => new Date(e.fecha).toLocaleTimeString());
@@ -190,9 +206,9 @@
       })
       .catch(err => {
         console.error("Error al obtener datos:", err);
-        showModal("Error", "No se pudo conectar con el servidor.");
+        alertas.push(["Error", "No se pudo conectar con el servidor."]);
+        mostrarSiguienteAlerta();
       });
   </script>
 </body>
 </html>
-
