@@ -38,7 +38,6 @@
       color: #2e7d32;
     }
 
-    /* Estilo del modal */
     .modal {
       display: none;
       position: fixed;
@@ -72,7 +71,18 @@
       border: none;
       border-radius: 6px;
     }
+
+    canvas {
+      display: block;
+      max-width: 900px;
+      margin: 2rem auto;
+      background: white;
+      border-radius: 10px;
+      padding: 1rem;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+    }
   </style>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
   <div class="card">
@@ -84,7 +94,6 @@
     <p><strong>Fecha:</strong> <span id="fecha">...</span></p>
   </div>
 
-  <!-- Modal -->
   <div id="modal" class="modal">
     <div class="modal-content">
       <h3>⚠️ ¡Temperatura elevada!</h3>
@@ -93,17 +102,25 @@
     </div>
   </div>
 
+  <canvas id="chartTemp" height="180"></canvas>
+  <canvas id="chartHum" height="180"></canvas>
+  <canvas id="chartBat" height="180"></canvas>
+
   <script>
     fetch('/.netlify/functions/getData')
       .then(r => r.json())
       .then(arr => {
-        const u = arr[arr.length - 1] || {};
+        if (!Array.isArray(arr) || arr.length === 0) {
+          console.warn("No hay datos disponibles");
+          return;
+        }
 
-        const temp = parseFloat(u.temperatura ?? 0);
-        const hum  = u.humedad    ?? '--';
-        const bat  = u.bateria    ?? '--';
-        const dev  = u.dispositivo?? '--';
-        const fecha = u.fecha     ?? '--';
+        const u = arr[arr.length - 1];
+        const temp  = parseFloat(u.temperatura ?? 0);
+        const hum   = u.humedad ?? '--';
+        const bat   = u.bateria ?? '--';
+        const dev   = u.dispositivo ?? '--';
+        const fecha = u.fecha ?? '--';
 
         document.getElementById('temp').textContent  = temp;
         document.getElementById('hum').textContent   = hum;
@@ -111,11 +128,51 @@
         document.getElementById('dev').textContent   = dev;
         document.getElementById('fecha').textContent = fecha;
 
-        // Mostrar el modal si la temperatura es mayor a 30
         if (temp > 30) {
           document.getElementById('modal').style.display = 'block';
         }
-      });
+
+        const labels = arr.map(e => new Date(e.fecha).toLocaleTimeString());
+
+        const dataTemp = arr.map(e => parseFloat(e.temperatura));
+        const dataHum  = arr.map(e => parseFloat(e.humedad));
+        const dataBat  = arr.map(e => parseFloat(e.bateria));
+
+        const createChart = (id, label, data, color) => {
+          const ctx = document.getElementById(id);
+          if (!ctx) return;
+          new Chart(ctx, {
+            type: 'line',
+            data: {
+              labels: labels,
+              datasets: [{
+                label: label,
+                data: data,
+                borderColor: color,
+                backgroundColor: color + '20',
+                fill: true,
+                tension: 0.4
+              }]
+            },
+            options: {
+              responsive: true,
+              scales: {
+                y: {
+                  beginAtZero: true
+                },
+                x: {
+                  title: { display: true, text: 'Hora' }
+                }
+              }
+            }
+          });
+        };
+
+        createChart('chartTemp', 'Temperatura (°C)', dataTemp, '#388e3c');
+        createChart('chartHum',  'Humedad (%)',       dataHum,  '#0288d1');
+        createChart('chartBat',  'Batería (V)',        dataBat,  '#f57c00');
+      })
+      .catch(err => console.error("Error al obtener datos:", err));
   </script>
 </body>
 </html>
