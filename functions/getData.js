@@ -10,7 +10,8 @@ exports.handler = async () => {
     if (!obj || typeof obj !== "object") throw new Error("No se obtuvieron datos válidos");
 
     const arr = Object.values(obj).filter(entry =>
-      entry &&
+      entry && 
+      entry.dispositivo === "4CE8C2" &&
       typeof entry.temperatura === 'number' &&
       typeof entry.humedad === 'number' &&
       typeof entry.bateria === 'number' &&
