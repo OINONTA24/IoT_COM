@@ -13,7 +13,7 @@ exports.handler = async () => {
       entry && 
       entry.dispositivo === "4CE8C2" &&
       typeof entry.temperatura === 'hexadecimal' &&
-      typeof entry.humedad === 'hexadeximal' &&
+      typeof entry.humedad === 'hexadecimal' &&
       typeof entry.bateria === 'hexadecimal' &&
       typeof entry.fecha === 'string'
     );
