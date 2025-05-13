@@ -7,7 +7,7 @@ exports.handler = async (event) => {
     const buf     = Buffer.from(payload.data, "hex");
 
     const temperatura = buf.readUInt16BE(0) / 10;  // primeros 2 bytes (4 hex)
-    const bateria     = buf.readUInt16BE(2) / 10;  // siguientes 2 bytes (4 hex)
+    const bateria     = buf.readUInt16BE(2) / 100;  // siguientes 2 bytes (4 hex)
 
     const entry = {
       temperatura,
