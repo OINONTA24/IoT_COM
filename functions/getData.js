@@ -12,9 +12,9 @@ exports.handler = async () => {
     const arr = Object.values(obj).filter(entry =>
       entry && 
       entry.dispositivo === "4CE8C2" &&
-      typeof entry.temperatura === 'hexadecimal' &&
-      typeof entry.humedad === 'hexadecimal' &&
-      typeof entry.bateria === 'hexadecimal' &&
+      typeof entry.temperatura === 'hexa' &&
+      typeof entry.humedad === 'hexa' &&
+      typeof entry.bateria === 'hexa' &&
       typeof entry.fecha === 'string'
     );
 
