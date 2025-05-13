@@ -11,7 +11,7 @@ exports.handler = async () => {
 
     const arr = Object.values(obj).filter(entry =>
       entry && 
-      //entry.dispositivo === "4CE8C2" &&
+      entry.dispositivo === "4CE8C2" &&
       typeof entry.temperatura === 'number' &&
       typeof entry.humedad === 'number' &&
       typeof entry.bateria === 'number' &&
