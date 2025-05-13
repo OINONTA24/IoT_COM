@@ -1,7 +1,7 @@
 {
-  "temp": 27,
-  "hum": 29
-  "bat": 34,
+  "dataTemp": 27,
+  "dataHum": 29
+  "dataBat": 34,
   "time": "2025-05-13T23:01:33.000Z"
   "device": "4CE8C2"
 }
