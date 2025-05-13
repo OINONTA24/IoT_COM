@@ -127,7 +127,7 @@
       setTimeout(mostrarSiguienteAlerta, 300);
     };
 
-    fetch('/.netlify/functions/getData')
+    fetch('/.netlify/data.json')
       .then(r => r.json())
       .then(arr => {
         if (!Array.isArray(arr) || arr.length === 0) {
